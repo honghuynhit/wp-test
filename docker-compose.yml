@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    # We use a mariadb image which supports both amd64 & arm64 architecture
+    image: mariadb:10.6.4-focal
+    # If you really want to use MySQL, uncomment the following line
+    #image: mysql:8.0.27
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=motconmeocohaicaichan
+      - MYSQL_DATABASE=talihome
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=motconbocoboncaichan
+    ports:
+      - 33063:3306
+    expose:
+      - 3306
+      - 33060
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - 8000:80
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=motconbocoboncaichan
+      - WORDPRESS_DB_NAME=talihome
+    working_dir: /var/www/html
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./.htaccess:/var/html/www/.htaccess
+volumes:
+  db_data:
